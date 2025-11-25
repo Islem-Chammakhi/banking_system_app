@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: securite
+      POSTGRES_PASSWORD: securite
+      POSTGRES_DB: securite
+    ports:
+      - "5432:5432"
+    volumes:
+      - securite_data:/var/lib/postgresql/data
+    networks:
+      - securite
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: securite@banking.tn
+      PGADMIN_DEFAULT_PASSWORD: securite
+    ports:
+      - "5050:5050"
+    depends_on:
+      - db
+    networks:
+      - securite
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - securite
+
+volumes:
+  securite_data:
+
+networks:
+  securite:
+    driver: bridge
