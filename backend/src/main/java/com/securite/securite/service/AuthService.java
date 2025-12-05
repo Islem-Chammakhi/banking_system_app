@@ -1,24 +1,33 @@
 package com.securite.securite.service;
 
+import com.securite.securite.dto.LoginDTO;
 import com.securite.securite.dto.RegisterDTO;
 import com.securite.securite.models.User;
 import com.securite.securite.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
-public class RegistrationService {
+@RequiredArgsConstructor
+public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-    public RegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional
     public User registerNewUser(RegisterDTO dto) {
@@ -42,4 +51,12 @@ public class RegistrationService {
         // 3. Save
         return userRepository.save(user);
     }
+
+public Authentication login(LoginDTO dto){
+    UsernamePasswordAuthenticationToken token =
+       new UsernamePasswordAuthenticationToken(dto.getCin(), dto.getPassword());
+
+    return authenticationManager.authenticate(token);
+}
+
 }

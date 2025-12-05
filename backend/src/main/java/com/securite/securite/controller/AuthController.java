@@ -3,33 +3,34 @@ package com.securite.securite.controller;
 import com.securite.securite.dto.LoginDTO;
 import com.securite.securite.dto.RegisterDTO;
 import com.securite.securite.models.User;
-import com.securite.securite.service.RegistrationService;
+import com.securite.securite.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
 
-    private final RegistrationService registrationService;
+    private final AuthService authService;
 
-    public AuthController(AuthenticationManager authenticationManager, RegistrationService registrationService) {
-        this.authenticationManager = authenticationManager;
-        this.registrationService = registrationService;
-    }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterDTO dto) {
         try {
-            User created = registrationService.registerNewUser(dto);
+            User created = authService.registerNewUser(dto);
             // Don't return the created entity with password; return minimal info or 201
             return ResponseEntity.status(201).body(
                     Map.of(
@@ -47,20 +48,28 @@ public class AuthController {
     }
 
 @PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginDTO dto, HttpServletRequest request) {
+public ResponseEntity<?> login(@RequestBody LoginDTO dto, HttpServletRequest request, HttpServletResponse response) {
 
-    UsernamePasswordAuthenticationToken authToken =
-            new UsernamePasswordAuthenticationToken(dto.getCin(), dto.getPassword());
+    Authentication auth = authService.login(dto);
 
-    Authentication authentication = authenticationManager.authenticate(authToken);
+    SecurityContext context = SecurityContextHolder.createEmptyContext();
+    context.setAuthentication(auth);
 
-    // Create session
-    request.getSession(true);
+    // créeer le contexte manuellement 
+    HttpSessionSecurityContextRepository repo = new HttpSessionSecurityContextRepository();
+    repo.saveContext(context, request, response); // créer la session si n'existe pas automatiquement
 
-    return ResponseEntity.ok(Map.of(
-            "message", "Logged in successfully",
-            "cin", dto.getCin()
-    ));
+    // SecurityContextHolder.getContext().setAuthentication(authentication);
+    // ! met l’utilisateur dans le contexte courant du thread,Pas dans la session !
+
+    return ResponseEntity.ok(Map.of("message", "Logged in"));
 }
 
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok("Logged out !");
+}
 }
