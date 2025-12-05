@@ -6,10 +6,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.securite.securite.security.CustomUserDetailsService;
 
@@ -34,18 +32,9 @@ public class SecurityConfig {
             .formLogin(form -> form.disable())
             .httpBasic(h -> h.disable())
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/auth/**",
-
-        // --- Swagger paths ---
-        "/v3/api-docs/**",
-    "/v3/api-docs.yaml",
-    "/swagger-ui/**",
-    "/swagger-ui.html",
-    "/swagger-resources/**",
-    "/webjars/**"
-                    ).permitAll()
-                    .anyRequest().authenticated()
-            )
+                    .requestMatchers("/auth/**")
+                    .permitAll()
+                    .anyRequest().authenticated())
             .sessionManagement(session ->
                     session
                         .maximumSessions(1)

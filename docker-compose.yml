@@ -21,7 +21,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: securite@banking.tn
       PGADMIN_DEFAULT_PASSWORD: securite
     ports:
-      - "5050:5050"
+      - "5050:80"
     depends_on:
       - db
     networks:
