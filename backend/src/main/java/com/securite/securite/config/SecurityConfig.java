@@ -32,7 +32,7 @@ public class SecurityConfig {
             .formLogin(form -> form.disable())
             .httpBasic(h -> h.disable())
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/auth/**")
+                    .requestMatchers("/auth/**","/account/**","/transfer/**")
                     .permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(session ->

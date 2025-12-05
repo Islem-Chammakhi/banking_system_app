@@ -1,11 +1,17 @@
 package com.securite.securite.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoginDTO {
     private String cin;
     private String password;
 
-    public String getCin() { return cin; }
-    public void setCin(String cin) { this.cin = cin; }
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+
 }
