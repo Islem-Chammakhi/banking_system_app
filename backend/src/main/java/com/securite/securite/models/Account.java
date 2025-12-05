@@ -21,7 +21,7 @@ public class Account {
     private String cardNumber;
     
     @Column(nullable = false)
-    private Double balance = 0.0;
+    private Double balance;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -34,4 +34,11 @@ public class Account {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore 
     private User user;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 }
