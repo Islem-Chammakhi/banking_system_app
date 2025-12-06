@@ -32,6 +32,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             // .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+            .cors(cors -> {})
             .csrf(csrf-> csrf.disable())
             .formLogin(form -> form.disable())
             .httpBasic(h -> h.disable())
@@ -45,14 +46,7 @@ public class SecurityConfig {
                         .maximumSessions(1) // Un utilisateur ne peut avoir qu'une seule session active à la fois.
                         .maxSessionsPreventsLogin(true) // Empêche le nouvel utilisateur de se connecter. Le nouveau login est rejeté
 
-            )
-            .logout(logout -> logout
-                        .logoutUrl("/auth/logout")
-                        .logoutSuccessHandler((req, res, auth) -> {
-                            res.setStatus(HttpServletResponse.SC_OK);
-                            res.getWriter().write("Logged out successfully");
-                        })
-                );
+            );
              http.userDetailsService(userDetailsService); // ! important puisque spring utilise un objet UserDetailsService
              http.authenticationProvider(authProvider(userDetailsService));
 

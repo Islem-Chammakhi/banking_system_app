@@ -6,16 +6,16 @@ export default function LoginLayout({ children, }: { children: React.ReactNode }
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       {/* content side */}
-      <div className="flex flex-col p-6">
+      <div className="flex flex-col p-10 md:p-6">
         {/* logo */}
-        <div className="flex justify-center gap-2 md:justify-start"> 
+        <div className="flex justify-center gap-2 md:justify-start "> 
           <Link href="/" className="flex items-center gap-2 font-medium">
             <Logo /> 
           </Link>
         </div>
         {/* forms */}
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs"> {children} </div>
+          <div className="w-full max-w-sm"> {children} </div>
         </div>
       </div>
       {/* image side */}

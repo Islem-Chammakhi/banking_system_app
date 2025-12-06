@@ -1,9 +1,6 @@
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import ProfileDropdown from './dropdown-profile'
 import ThemeSwitcher from '@/components/theme-toggle'
-import { User } from 'lucide-react'
 
 const Header = () => {
   return (
@@ -17,7 +14,6 @@ const Header = () => {
         {/* profile dropdown */}
         <div className='flex items-center gap-1'>
           <ThemeSwitcher />
-          <ProfileDropdown trigger={ <Button variant='ghost' size='icon'> <User /> </Button> } />
         </div>
       </div>
     </header>

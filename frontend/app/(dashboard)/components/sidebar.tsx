@@ -1,12 +1,21 @@
 import { ChartSplineIcon, FileSpreadsheetIcon, HistoryIcon, UsersIcon } from 'lucide-react'
-import { Sidebar as UISidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { Sidebar as UISidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarFooter } from '@/components/ui/sidebar'
 import Logo from '@/components/logo'
 import Link from 'next/link'
+import { SidebarFooting } from './sidebar-footer'
+
+const data = {
+  user: {
+    name: "Islem Chammakhi",
+    cin: "12895665",
+    avatar: "/placeholder.png",
+  }
+}
 
 const Sidebar = () => {
   return (
-    <UISidebar className=''>
-      <SidebarContent className='p-4'>
+    <UISidebar className='p-2'>
+      <SidebarHeader>
         {/* logo */}
         <SidebarGroup className='px-3.5'>
           <SidebarGroupContent>
@@ -17,6 +26,8 @@ const Sidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+      </SidebarHeader>
+      <SidebarContent>
         {/* pages */}
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
@@ -58,6 +69,9 @@ const Sidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarFooting user={data.user} />
+      </SidebarFooter>
     </UISidebar>
   )
 }

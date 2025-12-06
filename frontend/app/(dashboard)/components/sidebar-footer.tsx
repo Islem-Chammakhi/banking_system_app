@@ -1,0 +1,62 @@
+"use client"
+
+import { ChevronsUpDown, UserIcon } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage, } from "@/components/ui/avatar"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from "@/components/ui/sidebar"
+import { LogoutButton } from "./logout-button"
+
+export function SidebarFooting({ user }: { user: { name: string, cin: string, avatar: string } }) {
+  const { isMobile } = useSidebar()
+
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          {/* trigger button */}
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" >
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback className="rounded-lg"> {user.name?.charAt(0).toUpperCase() || 'U'} </AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate text-xs">CIN-{user.cin}</span>
+              </div>
+              <ChevronsUpDown className="ml-auto size-4" />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          {/* footer content */}
+          <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg" side={isMobile ? "bottom" : "top"} align="end" sideOffset={4} >
+            
+            {/* user info */}
+            <DropdownMenuLabel className="p-0 font-normal">
+              <div className="flex items-center gap-2 px-4 py-2.5 text-left text-sm">
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarFallback className="rounded-lg"> {user.name?.charAt(0).toUpperCase() || 'U'} </AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate text-xs">{user.cin}</span>
+                </div>
+              </div>
+            </DropdownMenuLabel>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuGroup>
+              {/* account */}
+              <DropdownMenuItem className='px-4 py-2 text-sm'> <UserIcon/> Account </DropdownMenuItem>
+              {/* logout */}
+              <LogoutButton/>
+            </DropdownMenuGroup>
+            
+            
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  )
+}

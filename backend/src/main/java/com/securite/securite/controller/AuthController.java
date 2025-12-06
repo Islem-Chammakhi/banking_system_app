@@ -47,23 +47,23 @@ public class AuthController {
         }
     }
 
-@PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginDTO dto, HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginDTO dto, HttpServletRequest request, HttpServletResponse response) {
 
-    Authentication auth = authService.login(dto);
+        Authentication auth = authService.login(dto);
 
-    SecurityContext context = SecurityContextHolder.createEmptyContext();
-    context.setAuthentication(auth);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(auth);
 
-    // créeer le contexte manuellement 
-    HttpSessionSecurityContextRepository repo = new HttpSessionSecurityContextRepository();
-    repo.saveContext(context, request, response); // créer la session si n'existe pas automatiquement
+        // créer le contexte manuellement 
+        HttpSessionSecurityContextRepository repo = new HttpSessionSecurityContextRepository();
+        repo.saveContext(context, request, response); // créer la session si n'existe pas automatiquement
 
-    // SecurityContextHolder.getContext().setAuthentication(authentication);
-    // ! met l’utilisateur dans le contexte courant du thread,Pas dans la session !
+        // SecurityContextHolder.getContext().setAuthentication(authentication);
+        // ! met l’utilisateur dans le contexte courant du thread,Pas dans la session !
 
-    return ResponseEntity.ok(Map.of("message", "Logged in"));
-}
+        return ResponseEntity.ok(Map.of("message", "Logged in"));
+    }
 
 
     @PostMapping("/logout")
@@ -71,5 +71,5 @@ public ResponseEntity<?> login(@RequestBody LoginDTO dto, HttpServletRequest req
         request.getSession().invalidate();
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Logged out !");
-}
+    }
 }

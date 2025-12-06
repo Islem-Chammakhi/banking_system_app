@@ -13,12 +13,13 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { FieldGroup, FieldSeparator, FieldDescription } from "@/components/ui/field"
+import Link from "next/link";
 
 
 // zod validation schema
 const formSchema = z.object({
-  cin: z.string().min(8, "CIN must be at least 8 characters").max(12, "CIN is too long"),
-  cardNumber: z.string().min(16, "Card number must be at least 16 digits").max(19, "Card number is too long"),
+  cin: z.string().min(8, "CIN must be at least 8 digits").max(12, "CIN is too long"),
+  password: z.string().min(8, "Password must be at least 8 characters").max(30, "Password is too long"),
 })
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
@@ -28,15 +29,16 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
   // react-hook-form setup
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { cin: "", cardNumber: "", },
+    defaultValues: { cin: "", password: "", },
   })
 
   // handle login
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    setServerError("") // reset errors
-
-    const { cin, cardNumber } = data
-    const result = await loginUser(cin, cardNumber)
+    // reset errors
+    setServerError("")
+    // extract data
+    const { cin, password } = data
+    const result = await loginUser(cin, password)
 
     if (result.success) {
       toast({ title: "Logged in successfully!", description: "Welcome back to your account!", })
@@ -59,10 +61,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
             </p>
           </div>
 
-          {/* CIN */}
-          <FormField
-            control={form.control}
-            name="cin"
+          {/* cin */}
+          <FormField control={form.control} name="cin"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>CIN</FormLabel>
@@ -74,20 +74,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
             )}
           />
 
-          {/* Card Number */}
-          <FormField
-            control={form.control}
-            name="cardNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Card Number</FormLabel>
-                <FormControl>
-                  <Input placeholder="0000 0000 0000 0000" disabled={loading} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* password */}
+            <FormField control={form.control} name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="••••••••" disabled={loading} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
           {/* login button */}
           <Button type="submit" disabled={loading}>
@@ -102,11 +100,17 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
           )}
 
           {/* extra info */}
-          <FieldSeparator className="mt-0.5">
-            <Info className="w-5 h-5 text-muted-foreground" />
-          </FieldSeparator>
-          <FieldDescription className="text-sm text-muted-foreground text-center">
+          <FieldSeparator className="mt-0.5"> <Info className="w-5 h-5 text-muted-foreground" /> </FieldSeparator>
+          
+          {/* <FieldDescription className="text-sm text-muted-foreground text-center">
             Make sure your phone is on standby to receive the OTP and complete the login process.
+          </FieldDescription> */}
+
+          <FieldDescription className="text-center">
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="font-semibold">
+              Register here
+            </Link>
           </FieldDescription>
           
         </FieldGroup>
