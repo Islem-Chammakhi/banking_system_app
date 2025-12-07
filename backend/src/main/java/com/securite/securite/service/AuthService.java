@@ -1,5 +1,9 @@
 package com.securite.securite.service;
 
+import com.securite.securite.chain_responsibility.auth.AccountExistHandler;
+import com.securite.securite.chain_responsibility.auth.ConfirmPasswordHandler;
+import com.securite.securite.chain_responsibility.auth.SignedUpHandler;
+import com.securite.securite.chain_responsibility.auth.UserExistHandler;
 import com.securite.securite.dto.LoginDTO;
 import com.securite.securite.dto.RegisterDTO;
 import com.securite.securite.models.User;
@@ -12,43 +16,31 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
-import java.time.LocalDateTime;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
+    private final UserExistHandler  userHandler ;
+    private final ConfirmPasswordHandler  confirmPasswHandler ;
+    private final AccountExistHandler  accountHandler ;
+    private final SignedUpHandler  signedUpHandler ;
 
     @Transactional
     public User registerNewUser(RegisterDTO dto) {
-        // 1. Check duplicate
-        if (userRepository.existsByCin(dto.getCin())) {
-            throw new IllegalArgumentException("CIN already in use");
-        }
+        userHandler.setNext(confirmPasswHandler)
+                   .setNext(accountHandler)
+                   .setNext(signedUpHandler);
+        userHandler.handle(dto);
+        
 
-        // 2. Map DTO -> Entity
-        User user = new User();
-        user.setCin(dto.getCin());
-        // hash the password before storing
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setPhone(dto.getPhone());
-        user.setEmail(dto.getEmail());
-        user.setCreatedAt(LocalDateTime.now());
-        // role defaults to USER (from entity), account left null for now
+        User user = userHandler.getUser();
+        user.setSigned_up(true);
 
-        // 3. Save
+
         return userRepository.save(user);
     }
 
