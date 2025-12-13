@@ -16,12 +16,12 @@ public class UserController {
     private final UserRepository userRepository;
     
     @PostMapping("/insert-user")
-    public User insertMockUser() {
+    public void insertMockUser() {
 
         User user = User.builder()
                 .cin("12345678")
-                .password("password123")
-                .confirm_password("password123")
+                // .password("password123")
+                // .confirm_password("password123")
                 .first_name("Islem")
                 .last_name("Chammakhi")
                 .phone("50123456")
@@ -30,6 +30,19 @@ public class UserController {
                 .role(Role.USER)  // adapte à ton enum
                 .build();
 
-        return userRepository.save(user);
+                // User user1 = User.builder()
+                // .cin("87654321")
+                // // .password("password123")
+                // // .confirm_password("password123")
+                // .first_name("Firas")
+                // .last_name("Ben Ali")
+                // .phone("22456789")
+                // .email("firas@test.com")
+                // .signed_up(true)
+                // .role(Role.USER)  // adapte à ton enum
+                // .build();
+
+         userRepository.save(user);
+        //  userRepository.save(user1);
     }
 }

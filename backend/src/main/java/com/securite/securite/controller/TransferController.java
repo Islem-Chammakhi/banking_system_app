@@ -23,7 +23,7 @@ public class TransferController {
 
     @PostMapping("/send")
     public ResponseEntity<TransferResponse> send(@RequestBody TransferDTO transfer) {
-        Transaction transaction = transferService.transfer(transfer.getSenderCardNumber(), transfer.getReceiverCardNumber(), transfer.getAmount());
+        Transaction transaction = transferService.transfer(transfer);
         TransferResponse response = TransferResponse.builder()
                                                     .amount(transaction.getAmount())
                                                     .senderCardNumber(transaction.getSenderAccount().getCardNumber())

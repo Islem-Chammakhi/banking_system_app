@@ -28,6 +28,7 @@ public abstract class BaseHandler<T> implements Handler<T> {
     public void handle(T request){
         if(next==null){
             System.out.println("process done !");
+            return;
         }
         next.handle(request);
     }

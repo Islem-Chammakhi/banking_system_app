@@ -1,7 +1,8 @@
-package com.securite.securite.chain_responsibility.auth;
+package com.securite.securite.chain_responsibility.auth.register;
 
 import org.springframework.stereotype.Component;
 
+import com.securite.securite.chain_responsibility.auth.BaseHandler;
 import com.securite.securite.dto.RegisterDTO;
 
 @Component
