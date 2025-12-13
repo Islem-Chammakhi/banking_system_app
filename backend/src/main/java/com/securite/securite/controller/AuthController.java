@@ -43,6 +43,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
         } catch (Exception ex) {
             // generic fallback
+            System.out.println(ex.getMessage());
             return ResponseEntity.status(500).body(Map.of("error", "Internal error"));
         }
     }

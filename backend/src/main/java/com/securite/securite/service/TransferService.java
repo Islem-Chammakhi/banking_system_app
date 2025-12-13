@@ -2,6 +2,13 @@ package com.securite.securite.service;
 
 import org.springframework.stereotype.Service;
 
+import com.securite.securite.chain_responsibility.transfer.CheckBalance;
+import com.securite.securite.chain_responsibility.transfer.CheckStatusAccountReceiver;
+import com.securite.securite.chain_responsibility.transfer.CheckStatusAccountSender;
+import com.securite.securite.chain_responsibility.transfer.ExistAccountReceiver;
+import com.securite.securite.chain_responsibility.transfer.ExistAccountSender;
+import com.securite.securite.chain_responsibility.transfer.TransferHandler;
+import com.securite.securite.dto.TransferDTO;
 import com.securite.securite.models.Account;
 import com.securite.securite.models.Transaction;
 import com.securite.securite.models.TransactionStatus;
@@ -16,41 +23,36 @@ public class TransferService {
     private final TransactionService transactionService;
     private final AccountService accountService;
 
+    private final ExistAccountSender existAccountSender;
+    private final ExistAccountReceiver existAccountReceiver;
+    private final CheckStatusAccountSender checkStatusAccountSender;
+    private final CheckStatusAccountReceiver checkStatusAccountReceiver;
+    private final CheckBalance checkBalance;
+    private final TransferHandler transferHandler;
+
 
 
     @Transactional
-    public Transaction transfer(String cardNumberSender,String cardNumberReceiver,double amount){
-        Account sender=accountService.checkExistingAccount(cardNumberSender);
-        Account receiver=accountService.checkExistingAccount(cardNumberReceiver);
-        if(receiver == null){
-            throw new RuntimeException("Le compte de destinataire n'existe pas  !");
-        }
-        boolean senderAccountsStatus=accountService.checkAccountStatus(sender);
-        boolean receiverAccountsStatus=accountService.checkAccountStatus(receiver);
-        if(!senderAccountsStatus){
-            throw new RuntimeException("Votre compte est désactivé !");
-        }
-        
-        if(!receiverAccountsStatus){
-            throw new RuntimeException("Le compte de destinataire est désactivé !");
-        }
-        
-        boolean validAmount=accountService.checkAmount(sender,amount);
-        if(!validAmount){
-            throw new RuntimeException("Solde insuffisant !");            
-        }
+    public Transaction transfer(TransferDTO transferDTO){
+        existAccountSender.setNext(existAccountReceiver)
+                          .setNext(checkStatusAccountSender)
+                          .setNext(checkStatusAccountReceiver)
+                          .setNext(checkBalance)
+                          .setNext(transferHandler);
 
+        existAccountSender.handle(transferDTO);
 
-        accountService.updateAmount(sender,sender.getBalance()-amount);
-        accountService.updateAmount(receiver,receiver.getBalance()+amount);
+        Account sender = existAccountSender.getSenderAccount();
+        Account receiver = existAccountReceiver.getReceiverAccount();
 
         Transaction transaction = Transaction.builder()
-                                             .amount(amount)
+                                             .amount(transferDTO.getAmount())
                                              .receiverAccount(receiver)
                                              .senderAccount(sender)
                                              .status(TransactionStatus.COMPLETED)
                                              .description("transfer amount from "+ sender.getCardNumber()+" to "+receiver.getCardNumber())
                                              .build();
+                                             
         return transactionService.addTransaction(transaction);
     }
 }

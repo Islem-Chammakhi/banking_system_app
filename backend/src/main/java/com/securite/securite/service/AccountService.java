@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.securite.securite.models.Account;
 import com.securite.securite.models.AccountStatus;
+import com.securite.securite.models.User;
 import com.securite.securite.repository.AccountRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,9 @@ public class AccountService {
 
     public  Account checkExistingAccount(String cardNumber){
         return accountRepo.findByCardNumber(cardNumber);
+    }
+
+    public boolean getAccountByUser(User user ){
+        return  accountRepo.existsByUser(user);
     }
 }

@@ -25,6 +25,9 @@ public class Account {
     
     @Column(nullable = false)
     private Double balance;
+
+    @Column(nullable = false)
+    private int code;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

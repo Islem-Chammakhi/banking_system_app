@@ -38,7 +38,7 @@ public class SecurityConfig {
             .httpBasic(h -> h.disable())
             .authorizeHttpRequests(auth -> auth
                     // .requestMatchers("/auth/**","/account/**","/transfer/**")
-                    .requestMatchers("/auth/**")
+                    .requestMatchers("/auth/**","/insert-user","/account")
                     .permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(session ->
